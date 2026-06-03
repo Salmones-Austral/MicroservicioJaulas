@@ -21,7 +21,11 @@ public class JaulaMapper {
                 request.criaderoId()
         );
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> dcc3677d5fefc15a7f2ba898766061de85f14fb9
     /**
      * Convierte DTO de actualización a modelo Jaula (PUT)
      * El ID viene desde el path (controller)
