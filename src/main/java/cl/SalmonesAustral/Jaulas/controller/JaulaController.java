@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.*;
 
 import cl.SalmonesAustral.Jaulas.modelo.Jaulas;
 import cl.SalmonesAustral.Jaulas.service.JaulaService;
+import org.springframework.web.reactive.function.client.WebClient;
+
 
 @RestController
 @RequestMapping("/api/v1/jaulas")
 public class JaulaController {
 
     private final JaulaService jaulaService;
+     private  WebClient webClient;
 
     // Constructor (igual que tu ejemplo)
     public JaulaController(JaulaService jaulaService) {
@@ -85,4 +88,26 @@ public class JaulaController {
         List<Jaulas> lista = jaulaService.obtenerPorCriadero(criaderoId);
         return ResponseEntity.ok(lista);
     }
+
+    // 🔗 Enviar mensaje a Criadero
+    @GetMapping("/notificar-criadero")
+    public ResponseEntity<String> notificarCriadero(@RequestParam String mensaje) {
+
+    String respuesta = webClient.get()
+            .uri("http://localhost:8080/api/criaderos/recibir?mensaje={mensaje}", mensaje)
+            .retrieve()
+            .bodyToMono(String.class)
+            .block();
+
+    return ResponseEntity.ok(respuesta);
+}
+
+// 📩 Recibir mensaje desde Jaula
+    @GetMapping("/recibir")
+    public ResponseEntity<String> recibirMensaje(@RequestParam String mensaje) {
+
+    System.out.println("📩 Mensaje recibido desde Jaulas: " + mensaje);
+
+    return ResponseEntity.ok("Criadero recibió: " + mensaje);
+}
 }
