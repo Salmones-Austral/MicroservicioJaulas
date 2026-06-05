@@ -1,12 +1,9 @@
 package cl.SalmonesAustral.Jaulas.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -35,17 +32,11 @@ public class JaulaController {
         return ResponseEntity.ok(jaulaService.getJaulas());
     }
 
+    //CAMBIO AQUÍ: Eliminado el BindingResult
     @PostMapping
-    public ResponseEntity<?> agregarJaula(@Valid @RequestBody CreateJaulaRequest request, BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> errores = new HashMap<>();
-            result.getFieldErrors().forEach(error -> 
-                errores.put(error.getField(), error.getDefaultMessage())
-            );
-            return new ResponseEntity<>(errores, HttpStatus.BAD_REQUEST);
-        }
-
-        // Usamos el Mapper
+    public ResponseEntity<?> agregarJaula(@Valid @RequestBody CreateJaulaRequest request) {
+        
+        // Usamos el Mapper directo. Si el @Valid falla, el GlobalExceptionHandler lo atrapa.
         Jaulas jaula = JaulaMapper.toModel(request);
         Jaulas nueva = jaulaService.saveJaula(jaula);
         
@@ -57,19 +48,13 @@ public class JaulaController {
         return ResponseEntity.ok(jaulaService.getJaulaById(id));
     }
 
+    //CAMBIO AQUÍ: Eliminado el BindingResult
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarJaula(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateJaulaRequest request, BindingResult result) {
+            @Valid @RequestBody UpdateJaulaRequest request) {
 
-        if (result.hasErrors()) {
-            Map<String, String> errores = new HashMap<>();
-            result.getFieldErrors().forEach(error -> 
-                errores.put(error.getField(), error.getDefaultMessage())
-            );
-            return new ResponseEntity<>(errores, HttpStatus.BAD_REQUEST);
-        }
-
+        // Usamos el Mapper directo
         Jaulas jaula = JaulaMapper.toModel(id, request);
         Jaulas actualizada = jaulaService.updateJaula(id, jaula);
 
@@ -108,5 +93,11 @@ public class JaulaController {
     public ResponseEntity<String> recibirMensaje(@RequestParam String mensaje) {
         System.out.println("📩 Mensaje recibido desde Jaulas: " + mensaje);
         return ResponseEntity.ok("Jaula recibió: " + mensaje);
+    }
+
+    @GetMapping("/criadero/{id}/activas")
+    public ResponseEntity<Boolean> tieneJaulasActivas(@PathVariable Long id) {
+        boolean tieneActivas = jaulaService.tieneJaulasActivas(id);
+        return ResponseEntity.ok(tieneActivas);
     }
 }

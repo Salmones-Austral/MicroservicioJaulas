@@ -71,4 +71,11 @@ public class JaulaService {
             throw new IllegalArgumentException("El Criadero con ID " + jaula.getCriaderoId() + " no existe.");
         }
     }
+
+    // Verifica si un criadero tiene jaulas activas
+    public boolean tieneJaulasActivas(Long criaderoId) {
+        List<Jaulas> jaulasDelCriadero = jaulaRepository.findByCriaderoId(criaderoId);
+        // Devuelve true si al menos una jaula tiene activa == true
+        return jaulasDelCriadero.stream().anyMatch(Jaulas::getActiva);
+    }
 }
