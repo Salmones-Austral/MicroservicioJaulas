@@ -3,8 +3,9 @@ package cl.SalmonesAustral.Jaulas.modelo;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "jaulas") // <-- AGREGA ESTO
 public class Jaulas {
-
+  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

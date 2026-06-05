@@ -1,113 +1,112 @@
 package cl.SalmonesAustral.Jaulas.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import cl.SalmonesAustral.Jaulas.modelo.Jaulas;
-import cl.SalmonesAustral.Jaulas.service.JaulaService;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import jakarta.validation.Valid;
+
+import cl.SalmonesAustral.Jaulas.dto.CreateJaulaRequest;
+import cl.SalmonesAustral.Jaulas.dto.UpdateJaulaRequest;
+import cl.SalmonesAustral.Jaulas.mapper.JaulaMapper;
+import cl.SalmonesAustral.Jaulas.modelo.Jaulas;
+import cl.SalmonesAustral.Jaulas.service.JaulaService;
 
 @RestController
 @RequestMapping("/api/v1/jaulas")
 public class JaulaController {
 
     private final JaulaService jaulaService;
-     private  WebClient webClient;
+    private final WebClient webClient;
 
-    // Constructor (igual que tu ejemplo)
-    public JaulaController(JaulaService jaulaService) {
+    public JaulaController(JaulaService jaulaService, WebClient.Builder webClientBuilder) {
         this.jaulaService = jaulaService;
+        this.webClient = webClientBuilder.build();
     }
 
-    // Obtener todas las jaulas
     @GetMapping
     public ResponseEntity<List<Jaulas>> listarJaulas() {
-        List<Jaulas> jaulas = jaulaService.getJaulas();
-        return ResponseEntity.ok(jaulas);
+        return ResponseEntity.ok(jaulaService.getJaulas());
     }
 
-    // Crear jaula
     @PostMapping
-    public ResponseEntity<Jaulas> agregarJaula(@RequestBody Jaulas jaula) {
+    public ResponseEntity<?> agregarJaula(@Valid @RequestBody CreateJaulaRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errores = new HashMap<>();
+            result.getFieldErrors().forEach(error -> 
+                errores.put(error.getField(), error.getDefaultMessage())
+            );
+            return new ResponseEntity<>(errores, HttpStatus.BAD_REQUEST);
+        }
+
+        // Usamos el Mapper
+        Jaulas jaula = JaulaMapper.toModel(request);
         Jaulas nueva = jaulaService.saveJaula(jaula);
+        
         return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
     }
 
-    // Buscar por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Jaulas> buscarJaula(@PathVariable int id) {
-        Jaulas jaula = jaulaService.getJaulaById((long) id);
-        if (jaula == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(jaula);
+    public ResponseEntity<Jaulas> buscarJaula(@PathVariable Long id) {
+        return ResponseEntity.ok(jaulaService.getJaulaById(id));
     }
 
-    // Actualizar
     @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarJaula(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateJaulaRequest request, BindingResult result) {
 
-    public ResponseEntity<Jaulas> actualizarJaula(
-            @PathVariable int id,
-            @RequestBody Jaulas jaula) {
-
-        jaula.setId((long) id); // importante: el id viene del path
-        Jaulas actualizada = jaulaService.updateJaula(jaula);
-
-        if (actualizada == null) {
-            return ResponseEntity.badRequest().build();
+        if (result.hasErrors()) {
+            Map<String, String> errores = new HashMap<>();
+            result.getFieldErrors().forEach(error -> 
+                errores.put(error.getField(), error.getDefaultMessage())
+            );
+            return new ResponseEntity<>(errores, HttpStatus.BAD_REQUEST);
         }
+
+        Jaulas jaula = JaulaMapper.toModel(id, request);
+        Jaulas actualizada = jaulaService.updateJaula(id, jaula);
 
         return ResponseEntity.ok(actualizada);
     }
-        
 
-    //  Eliminar
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarJaula(@PathVariable int id) 
-    {
-        jaulaService.deleteJaula((long) id);
+    public ResponseEntity<String> eliminarJaula(@PathVariable Long id) {
+        jaulaService.deleteJaula(id);
         return ResponseEntity.ok("Jaula eliminada");
-        
-
     }
 
-    // Total de jaulas
     @GetMapping("/total")
     public ResponseEntity<Integer> totalJaulas() {
-        int total = jaulaService.totalJaulas();
-        return ResponseEntity.ok(total);
+        return ResponseEntity.ok(jaulaService.totalJaulas());
     }
 
-    // Buscar por criaderoId (lógica de negocio clave)
     @GetMapping("/criadero/{criaderoId}")
-    public ResponseEntity<List<Jaulas>> obtenerPorCriadero(@PathVariable long criaderoId) {
-        List<Jaulas> lista = jaulaService.obtenerPorCriadero(criaderoId);
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<List<Jaulas>> obtenerPorCriadero(@PathVariable Long criaderoId) {
+        return ResponseEntity.ok(jaulaService.obtenerPorCriadero(criaderoId));
     }
 
-    // 🔗 Enviar mensaje a Criadero
+    // COMUNICACIONES
     @GetMapping("/notificar-criadero")
     public ResponseEntity<String> notificarCriadero(@RequestParam String mensaje) {
+        String respuesta = webClient.get()
+                .uri("http://localhost:8080/api/v1/criaderos/recibir?mensaje={mensaje}", mensaje)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
-    String respuesta = webClient.get()
-            .uri("http://localhost:8080/api/criaderos/recibir?mensaje={mensaje}", mensaje)
-            .retrieve()
-            .bodyToMono(String.class)
-            .block();
+        return ResponseEntity.ok(respuesta);
+    }
 
-    return ResponseEntity.ok(respuesta);
-}
-
-// 📩 Recibir mensaje desde Jaula
     @GetMapping("/recibir")
     public ResponseEntity<String> recibirMensaje(@RequestParam String mensaje) {
-
-    System.out.println("📩 Mensaje recibido desde Jaulas: " + mensaje);
-
-    return ResponseEntity.ok("Criadero recibió: " + mensaje);
-}
+        System.out.println("📩 Mensaje recibido desde Jaulas: " + mensaje);
+        return ResponseEntity.ok("Jaula recibió: " + mensaje);
+    }
 }

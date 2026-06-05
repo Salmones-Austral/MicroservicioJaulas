@@ -18,12 +18,11 @@ public interface JaulaRepository extends JpaRepository<Jaulas, Long> {
         return (int) this.count();
     }
 
-    // Buscar jaulas por criadero
-    @Query(value = "SELECT * FROM jaula WHERE criadero_id = :criaderoId", nativeQuery = true)
+  // Buscar jaulas por criadero
+    @Query(value = "SELECT * FROM jaulas WHERE criadero_id = :criaderoId", nativeQuery = true)
     List<Jaulas> findByCriaderoId(@Param("criaderoId") Long criaderoId);
 
     // Buscar jaulas activas
-    @Query(value = "SELECT * FROM jaula WHERE activa = true", nativeQuery = true)
+    @Query(value = "SELECT * FROM jaulas WHERE activa = true", nativeQuery = true)
     List<Jaulas> findActivas();
-
 }

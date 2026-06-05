@@ -11,7 +11,7 @@ public class WebClientConfig {
     @Bean
     public WebClient JaulaWebClient(WebClient.Builder builder) {
         return builder
-                .baseUrl("http://localhost:8081/api/jaulas") // microservicio externo
+                .baseUrl("http://localhost:8080/api/criaderos") // microservicio externo
                 .build();
     }
 }
