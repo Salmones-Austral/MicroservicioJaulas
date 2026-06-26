@@ -6,12 +6,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class WebClientConfig {
+    
     @Bean
-    public WebClient.Builder webClientBuilder() {return WebClient.builder();}
-    @Bean
-    public WebClient JaulaWebClient(WebClient.Builder builder) {
-        return builder
-                .baseUrl("http://localhost:8080/api/criaderos") // microservicio externo
-                .build();
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
     }
+    
+    // BORRA EL BEAN JaulaWebClient QUE TENÍA EL LOCALHOST
 }
