@@ -104,9 +104,9 @@ public class JaulaController {
         return ResponseEntity.ok(tieneActivas);                                  // Retorna true o false envuelto en un HTTP 200 OK
     }
     //entregar a MS alimentacion
-    @GetMapping("/{codigo}") 
+    @GetMapping("/codigo/{codigo}") 
     public ResponseEntity<List<Jaulas>> obtenerJaulasPorCodigo(@PathVariable String codigo) {
-        List<Jaulas> jaulas = jaulaService.findByCodigo(codigo);
-        return ResponseEntity.ok(jaulas);
+    List<Jaulas> jaulas = jaulaService.findByCodigo(codigo);
+    return ResponseEntity.ok(jaulas);
     }
 }
