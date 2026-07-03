@@ -14,6 +14,9 @@ import org.springframework.data.repository.query.Param;
 public interface JaulaRepository extends JpaRepository<Jaulas, Long> {
 
     //TOTAL (igual que tu ejemplo)
+
+    List<Jaulas> findByNombreContainingIgnoreCase(String nombre);
+
     default int totalJaulas() {
         return (int) this.count();
     }

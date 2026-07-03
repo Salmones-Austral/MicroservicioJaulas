@@ -78,4 +78,8 @@ public class JaulaService {
         // Devuelve true si al menos una jaula tiene activa == true
         return jaulasDelCriadero.stream().anyMatch(Jaulas::getActiva);
     }
+
+    public List<Jaulas> findByNombre(String nombre) {
+        return jaulaRepository.findByNombreContainingIgnoreCase(nombre);
+    }
 }

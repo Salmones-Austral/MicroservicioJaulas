@@ -103,4 +103,10 @@ public class JaulaController {
         boolean tieneActivas = jaulaService.tieneJaulasActivas(id);              // Ejecuta la lógica booleana de búsqueda en el servicio
         return ResponseEntity.ok(tieneActivas);                                  // Retorna true o false envuelto en un HTTP 200 OK
     }
+    //entregar a MS alimentacion
+    @GetMapping("/{nombre}") 
+    public ResponseEntity<List<Jaulas>> obtenerJaulasPorNombre(@PathVariable String nombre) {
+        List<Jaulas> jaulas = jaulaService.findByNombre(nombre);
+        return ResponseEntity.ok(jaulas);
+    }
 }
