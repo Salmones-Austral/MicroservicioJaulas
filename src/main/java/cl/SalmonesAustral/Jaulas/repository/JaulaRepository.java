@@ -29,4 +29,6 @@ public interface JaulaRepository extends JpaRepository<Jaulas, Long> {
 
     @Query("SELECT DISTINCT j.codigo FROM Jaulas j")
     List<String> obtenerTodosLosCodigos();
+
+    
 }

@@ -79,7 +79,7 @@ public class JaulaService {
         return jaulasDelCriadero.stream().anyMatch(Jaulas::getActiva);
     }
 
-    public List<String> obtenerTodosLosCodigos() {
-        return jaulaRepository.obtenerTodosLosCodigos();
+    public List<Jaulas> obtenerTodasLasJaulas() {
+        return jaulaRepository.findAll(); 
     }
 }

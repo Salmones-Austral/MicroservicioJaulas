@@ -26,7 +26,7 @@ public class JaulaController {
         this.jaulaService = jaulaService;                                        // Asigna el servicio de base de datos inyectado
         this.webClient = webClientBuilder.build();                               // Construye la instancia lista del cliente WebClient
     }
-
+    //entregar a MS alimentacion
     @GetMapping                                                                  // Responde a peticiones GET en la ruta raíz (/api/v1/jaulas)
     public ResponseEntity<List<Jaulas>> listarJaulas() {                         // Método para retornar todas las jaulas registradas
         return ResponseEntity.ok(jaulaService.getJaulas());                      // Llama al servicio, obtiene la lista y responde con HTTP 200 OK
@@ -102,11 +102,5 @@ public class JaulaController {
     public ResponseEntity<Boolean> tieneJaulasActivas(@PathVariable Long id) {    // Captura el ID del criadero a auditar
         boolean tieneActivas = jaulaService.tieneJaulasActivas(id);              // Ejecuta la lógica booleana de búsqueda en el servicio
         return ResponseEntity.ok(tieneActivas);                                  // Retorna true o false envuelto en un HTTP 200 OK
-    }
-    //entregar a MS alimentacion
-    @GetMapping("/codigos")
-    public ResponseEntity<List<String>> listarTodosLosCodigos() {
-        List<String> codigos = jaulaService.obtenerTodosLosCodigos(); 
-        return ResponseEntity.ok(codigos);
     }
 }
