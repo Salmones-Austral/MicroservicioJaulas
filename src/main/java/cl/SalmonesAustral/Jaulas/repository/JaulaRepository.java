@@ -15,8 +15,6 @@ public interface JaulaRepository extends JpaRepository<Jaulas, Long> {
 
     //TOTAL (igual que tu ejemplo)
 
-    List<Jaulas> findByCodigoContainingIgnoreCase(String codigo);
-
     default int totalJaulas() {
         return (int) this.count();
     }
@@ -28,4 +26,7 @@ public interface JaulaRepository extends JpaRepository<Jaulas, Long> {
     // Buscar jaulas activas
     @Query(value = "SELECT * FROM jaulas WHERE activa = true", nativeQuery = true)
     List<Jaulas> findActivas();
+
+    @Query("SELECT DISTINCT j.codigo FROM Jaulas j")
+    List<String> obtenerTodosLosCodigos();
 }
