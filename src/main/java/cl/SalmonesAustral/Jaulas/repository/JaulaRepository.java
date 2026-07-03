@@ -15,7 +15,7 @@ public interface JaulaRepository extends JpaRepository<Jaulas, Long> {
 
     //TOTAL (igual que tu ejemplo)
 
-    List<Jaulas> findByNombreContainingIgnoreCase(String nombre);
+    List<Jaulas> findByCodigoContainingIgnoreCase(String codigo);
 
     default int totalJaulas() {
         return (int) this.count();

@@ -79,7 +79,7 @@ public class JaulaService {
         return jaulasDelCriadero.stream().anyMatch(Jaulas::getActiva);
     }
 
-    public List<Jaulas> findByNombre(String nombre) {
-        return jaulaRepository.findByNombreContainingIgnoreCase(nombre);
+    public List<Jaulas> findByCodigo(String codigo) {
+        return jaulaRepository.findByCodigoContainingIgnoreCase(codigo);
     }
 }
