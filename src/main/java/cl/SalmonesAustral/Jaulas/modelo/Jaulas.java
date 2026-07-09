@@ -21,17 +21,20 @@ public class Jaulas {
     //En vez de relación, solo guardas el ID
     private Long criaderoId;
 
+    private Boolean habilitarAlimentacion;
+
     // Constructores
     public Jaulas() {
     }
 
-    public Jaulas(Long id, String codigo, int capacidadMaxima, int cantidadActual, Boolean activa, Long criaderoId) {
+    public Jaulas(Long id, String codigo, int capacidadMaxima, int cantidadActual, Boolean activa, Long criaderoId, Boolean habilitarAlimentacion) {
         this.id = id;
         this.codigo = codigo;
         this.capacidadMaxima = capacidadMaxima;
         this.cantidadActual = cantidadActual;
         this.activa = activa;
         this.criaderoId = criaderoId;
+        this.habilitarAlimentacion = habilitarAlimentacion;
     }
 
     public Long getId() {
@@ -80,5 +83,13 @@ public class Jaulas {
 
     public void setCriaderoId(Long criaderoId) {
         this.criaderoId = criaderoId;
+    }
+
+    public Boolean getHabilitarAlimentacion() {
+        return habilitarAlimentacion;
+    }
+
+    public void setHabilitarAlimentacion(Boolean habilitarAlimentacion) {
+        this.habilitarAlimentacion = habilitarAlimentacion;
     }
 }

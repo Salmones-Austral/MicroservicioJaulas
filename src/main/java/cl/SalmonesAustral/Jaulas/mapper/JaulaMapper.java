@@ -18,7 +18,8 @@ public class JaulaMapper {
                 request.capacidadMaxima(),
                 request.cantidadActual(),
                 request.activa(),
-                request.criaderoId()
+                request.criaderoId(),
+                request.habilitarAlimentacion()
         );
     }
 
@@ -33,7 +34,8 @@ public class JaulaMapper {
                 request.capacidadMaxima(),
                 request.cantidadActual(),
                 request.activa(),
-                request.criaderoId()
+                request.criaderoId(),
+                request.habilitarAlimentacion()
         );
     }
 }

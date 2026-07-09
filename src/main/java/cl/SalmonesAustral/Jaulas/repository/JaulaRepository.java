@@ -5,7 +5,8 @@ import org.springframework.stereotype.Repository;
 
 import cl.SalmonesAustral.Jaulas.modelo.Jaulas;
 
-import java.util.List;
+import java.util.List;      //si queremos importar varios datos
+import java.util.Optional;  //si queremos solamente un dato(para actualizar por un dato)
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,5 +31,7 @@ public interface JaulaRepository extends JpaRepository<Jaulas, Long> {
     @Query("SELECT DISTINCT j.codigo FROM Jaulas j")
     List<String> obtenerTodosLosCodigos();
 
+    //para actualizar datos por el nombre
+    Optional<Jaulas> findByCodigo(String codigo);
     
 }

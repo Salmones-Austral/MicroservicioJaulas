@@ -1,6 +1,10 @@
 package cl.SalmonesAustral.Jaulas.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import cl.SalmonesAustral.Jaulas.modelo.Jaulas;
 import cl.SalmonesAustral.Jaulas.repository.JaulaRepository;
@@ -18,6 +22,7 @@ public class JaulaService {
         this.criaderoClient = criaderoClient;
     }
 
+    // se reutiliza para listar en MS alimentacion
     public List<Jaulas> getJaulas() {
         return jaulaRepository.findAll();
     }
@@ -79,7 +84,31 @@ public class JaulaService {
         return jaulasDelCriadero.stream().anyMatch(Jaulas::getActiva);
     }
 
-    public List<Jaulas> obtenerTodasLasJaulas() {
-        return jaulaRepository.findAll(); 
+    /////////////////////PARA EL MS ALIMENTACION///////////////////////////////
+    //para listar Codigos y estado de las jaulas
+    public List<Map<String, Object>> listarEstadosAlimentacion() {
+        List<Jaulas> todasLasJaulas = jaulaRepository.findAll();
+        
+        return todasLasJaulas.stream().map(jaula -> {
+            Map<String, Object> estadoJaula = new HashMap<>();
+            estadoJaula.put("codigo", jaula.getCodigo());
+            estadoJaula.put("habilitarAlimentacion", jaula.getHabilitarAlimentacion());
+            return estadoJaula;
+        }).collect(Collectors.toList());
+    }
+
+    //validacion de si existe el codigo de la jaula
+    public Jaulas buscarPorCodigo(String codigo) {
+        return jaulaRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new RuntimeException("Jaula no encontrada con el código: " + codigo));
+    }
+
+    //Para actualizar el estado por medio del codigo de la jaula
+    public Jaulas actualizarEstadoAlimentacion(String codigo, Boolean habilitarAlimentacion) {
+        Jaulas jaula = buscarPorCodigo(codigo);
+        
+        jaula.setHabilitarAlimentacion(habilitarAlimentacion);
+        
+        return jaulaRepository.save(jaula);
     }
 }

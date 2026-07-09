@@ -1,6 +1,8 @@
 package cl.SalmonesAustral.Jaulas.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +28,7 @@ public class JaulaController {
         this.jaulaService = jaulaService;                                        // Asigna el servicio de base de datos inyectado
         this.webClient = webClientBuilder.build();                               // Construye la instancia lista del cliente WebClient
     }
-    //entregar a MS alimentacion
+    //reutiliza este metodo get para MS alimentacion
     @GetMapping                                                                  // Responde a peticiones GET en la ruta raíz (/api/v1/jaulas)
     public ResponseEntity<List<Jaulas>> listarJaulas() {                         // Método para retornar todas las jaulas registradas
         return ResponseEntity.ok(jaulaService.getJaulas());                      // Llama al servicio, obtiene la lista y responde con HTTP 200 OK
@@ -102,5 +104,27 @@ public class JaulaController {
     public ResponseEntity<Boolean> tieneJaulasActivas(@PathVariable Long id) {    // Captura el ID del criadero a auditar
         boolean tieneActivas = jaulaService.tieneJaulasActivas(id);              // Ejecuta la lógica booleana de búsqueda en el servicio
         return ResponseEntity.ok(tieneActivas);                                  // Retorna true o false envuelto en un HTTP 200 OK
+    }
+
+    /////////////////////PARA EL MS ALIMENTACION///////////////////////////////
+    //para listar Codigos y estado de las jaulas
+    @GetMapping("/listar-estados-habilitacion")
+    public ResponseEntity<List<Map<String, Object>>> listarTodosLosEstados() {
+        List<Map<String, Object>> respuesta = jaulaService.listarEstadosAlimentacion();
+        return ResponseEntity.ok(respuesta);
+    }
+
+    //Para actualizar el estado por medio del codigo de la jaula
+    @PutMapping("/codigo/{codigo}/habilitacion")
+    public ResponseEntity<Map<String, Object>> cambiarEstadoAlimentacion(
+            @PathVariable String codigo, 
+            @RequestParam Boolean habilitarAlimentacion) {
+
+        Jaulas jaulaActualizada = jaulaService.actualizarEstadoAlimentacion(codigo, habilitarAlimentacion);
+
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("mensaje", "Se ha modificado la jaula " + codigo);
+        respuesta.put("habilitarAlimentacion", jaulaActualizada.getHabilitarAlimentacion());
+        return ResponseEntity.ok(respuesta);
     }
 }
