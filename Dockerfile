@@ -1,5 +1,5 @@
 # Etapa 1: build con Maven Wrapper
-FROM eclipse-temurin:25-jdk AS build
+FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 
 COPY .mvn/ .mvn/
@@ -10,7 +10,7 @@ COPY src ./src
 RUN ./mvnw clean package -DskipTests -B
 
 # Etapa 2: runtime liviano (solo JRE)
-FROM eclipse-temurin:25-jre AS runtime
+FROM eclipse-temurin:21-jre AS runtime
 WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
